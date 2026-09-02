@@ -1,0 +1,154 @@
+---
+import { ArrowUpRight, Check } from "lucide-react";
+import MainLayout from "@/layouts/main-layout.astro";
+
+const values = [
+  [
+    "Terbuka",
+    "Siapa pun dapat datang, belajar, dan berkontribusi tanpa memandang tingkat pengalaman.",
+  ],
+  [
+    "Kolaboratif",
+    "Pengetahuan berkembang lebih jauh saat ide dan pengalaman dibagikan.",
+  ],
+  [
+    "Berdampak",
+    "Setiap kegiatan diarahkan pada manfaat bagi anggota dan ekosistem teknologi secara menyeluruh.",
+  ],
+];
+---
+
+<MainLayout title="Tentang Kami">
+  <section class="border-b border-border pt-16">
+    <div class="mx-auto max-w-7xl px-5 py-section md:px-8 md:py-section-lg">
+      <div class="grid gap-8 lg:grid-cols-split lg:gap-12">
+        <h1
+          class="text-balance font-display text-5xl font-semibold tracking-hero text-foreground md:text-6xl"
+        >
+          Teknologi tumbuh saat orang <span
+            class="font-serif font-normal italic tracking-normal"
+            >saling menguatkan.</span
+          >
+        </h1>
+        <p
+          class="max-w-xl text-lg leading-7 text-muted-foreground md:leading-8"
+        >
+          Tulungagung Dev adalah komunitas teknologi dengan tujuan untuk
+          memperluas akses belajar dan kolaborasi bagi talenta lokal. Kamu bisa
+          berkembang dari Tulungagung tanpa harus mencari ruang belajar ke kota
+          besar.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-section md:py-section-lg">
+    <div
+      class="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-12 lg:gap-12"
+    >
+      <div class="lg:col-span-7">
+        <div class="overflow-hidden rounded-2xl border border-border bg-muted">
+          <img
+            src="/images/common/community-team.avif"
+            alt="Anggota Tulungagung Dev"
+            class="aspect-card w-full object-cover"
+          />
+        </div>
+      </div>
+      <div class="lg:col-span-5 lg:pt-6">
+        <h2
+          class="font-display text-3xl font-semibold tracking-tight text-foreground"
+        >
+          Mendekatkan kesempatan belajar.
+        </h2>
+        <div class="mt-5 space-y-4 text-base leading-7 text-muted-foreground">
+          <p>
+            Kami mempertemukan pengembang, desainer, mahasiswa, dan profesional
+            teknologi agar dapat saling mendukung, bertukar pengetahuan, serta
+            membangun karya yang bermanfaat.
+          </p>
+          <p>
+            Komunitas dikelola secara mandiri oleh relawan melalui <i>meetup</i
+            >, diskusi, dan sesi diskusi proyek yang terbuka bagi siapa pun yang
+            ingin berkembang.
+          </p>
+        </div>
+        <a
+          href="/join"
+          class="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+        >
+          Bergabung dengan kami
+          <ArrowUpRight size={17} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-border bg-card py-section md:py-section-lg">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+      <div class="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:gap-12">
+        <div>
+          <h2
+            class="font-display text-3xl font-semibold tracking-tight text-foreground"
+          >
+            Cara kami menjaga komunitas.
+          </h2>
+        </div>
+        <div class="divide-y divide-border border-y border-border">
+          {
+            values.map(([title, description]) => (
+              <div class="grid gap-3 py-5 sm:grid-cols-[1fr_2fr] sm:gap-6">
+                <h3 class="inline-flex items-center gap-3 font-display text-lg font-semibold text-foreground">
+                  <Check size={18} className="text-primary" /> {title}
+                </h3>
+                <p class="text-sm leading-6 text-muted-foreground">
+                  {description}
+                </p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-section md:py-section-lg">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+      <div class="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
+        <div>
+          <h2
+            class="font-display text-3xl font-semibold tracking-tight text-foreground"
+          >
+            Talenta lokal yang siap berkontribusi lebih luas.
+          </h2>
+          <p class="mt-4 text-base leading-7 text-muted-foreground">
+            Kami mendampingi talenta lokal agar lebih siap menghadapi kebutuhan
+            industri dan menciptakan dampak dari Tulungagung.
+          </p>
+          <ul class="mt-6 space-y-3 text-sm text-foreground">
+            <li class="flex gap-3">
+              <Check size={18} className="mt-0.5 shrink-0 text-primary" /> Kegiatan
+              belajar yang terstruktur dan mudah diikuti.
+            </li>
+            <li class="flex gap-3">
+              <Check size={18} className="mt-0.5 shrink-0 text-primary" /> Jejaring
+              kolaborasi yang saling mendukung.
+            </li>
+            <li class="flex gap-3">
+              <Check size={18} className="mt-0.5 shrink-0 text-primary" /> Kontribusi
+              pada proyek teknologi dan open source lokal.
+            </li>
+          </ul>
+        </div>
+        <div class="overflow-hidden rounded-2xl border border-border bg-muted">
+          <img
+            src="/images/gathering/community-gathering-2.avif"
+            alt="Pertemuan anggota Tulungagung Dev"
+            class="aspect-card w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</MainLayout>

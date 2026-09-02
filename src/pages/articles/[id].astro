@@ -1,0 +1,319 @@
+---
+import { getCollection, render } from "astro:content";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  CalendarDays,
+  Clock,
+  MessageSquare,
+  Share2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import MainLayout from "@/layouts/main-layout.astro";
+import { formatDateId } from "@/lib/date";
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles");
+  return articles.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { id } = Astro.params;
+
+if (!id) {
+  throw new Error("Missing article id param.");
+}
+
+const entries = await getCollection("articles");
+const { entry } = Astro.props;
+
+const { Content, headings } = await render(entry);
+
+const authorInitials = entry.data.author
+  .split(/\s+/)
+  .map((part) => part[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+
+const article = {
+  id: entry.id,
+  ...entry.data,
+  dateText: formatDateId(entry.data.date),
+  subtitle: entry.data.subtitle ?? entry.data.excerpt,
+};
+
+const relatedArticles = entries
+  .filter((item) => item.id !== entry.id)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3)
+  .map((item) => ({
+    id: item.id,
+    title: item.data.title,
+    category: item.data.category,
+    image: item.data.image,
+    date: formatDateId(item.data.date),
+    readTime: item.data.readTime,
+  }));
+---
+
+<MainLayout
+  title={article.title}
+  description={article.subtitle}
+  image={article.image}
+  type="article"
+  publishedTime={article.date.toISOString()}
+>
+  <div class="min-h-screen bg-background pb-section pt-16 md:pb-section-lg">
+    <article>
+      <header class="border-b border-border">
+        <div class="mx-auto max-w-5xl px-5 pb-10 pt-6 md:px-8 md:pb-12 md:pt-8">
+          <a
+            href="/articles"
+            class="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft size={16} />
+            Semua artikel
+          </a>
+
+          <div class="mt-7 motion-preset-fade">
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+              <span
+                class="rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground"
+              >
+                {article.category}
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-muted-foreground"
+                ><Clock size={15} /> {article.readTime}</span
+              >
+            </div>
+
+            <h1
+              class="mt-4 max-w-4xl text-balance font-display text-4xl font-semibold leading-display tracking-display text-foreground md:text-6xl lg:text-7xl"
+            >
+              {article.title}
+            </h1>
+            <p
+              class="mt-5 max-w-3xl text-lg leading-7 text-muted-foreground md:text-xl md:leading-8"
+            >
+              {article.subtitle}
+            </p>
+
+            <div
+              class="mt-7 flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary font-display text-sm font-semibold text-primary-foreground"
+                  aria-hidden="true"
+                >
+                  {authorInitials}
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-foreground">
+                    {article.author}
+                  </p>
+                  <p class="mt-0.5 text-xs text-muted-foreground">
+                    {article.role}
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
+              >
+                <span class="inline-flex items-center gap-1.5"
+                  ><CalendarDays size={15} /> {article.dateText}</span
+                >
+                <Button
+                  type="button"
+                  data-share-button
+                  variant="link"
+                  className="h-auto p-0 font-medium text-primary hover:text-primary/80"
+                  aria-label="Bagikan artikel"
+                >
+                  <Share2 size={15} />
+                  <span data-share-label>Bagikan</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="mx-auto max-w-7xl px-5 pt-8 md:px-8 md:pt-10">
+        <figure
+          class="overflow-hidden rounded-2xl border border-border bg-muted motion-preset-fade motion-delay-100"
+        >
+          <img
+            src={article.image}
+            alt={article.title}
+            class="aspect-wide w-full object-cover"
+            fetchpriority="high"
+          />
+        </figure>
+
+        <div
+          class="mt-10 grid gap-8 lg:grid-cols-[13rem_minmax(0,46rem)] lg:justify-center lg:gap-12 md:mt-12"
+        >
+          <aside class="hidden h-fit lg:sticky lg:top-28 lg:block">
+            <nav
+              class="mt-4 border-l border-border"
+              aria-label="Daftar isi artikel"
+            >
+              {
+                headings.map((heading) => (
+                  <a
+                    href={`#${heading.slug}`}
+                    class="block border-l-2 border-transparent py-2 pl-4 text-sm leading-5 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    {heading.text}
+                  </a>
+                ))
+              }
+            </nav>
+            <Button
+              type="button"
+              data-share-button
+              variant="link"
+              className="mt-7 h-auto p-0 text-sm font-semibold text-primary hover:text-primary/80"
+            >
+              <Share2 size={16} />
+              <span data-share-label>Bagikan artikel</span>
+            </Button>
+          </aside>
+
+          <div class="min-w-0">
+            <div
+              class="mb-8 border-l-2 border-primary pl-5 text-lg leading-7 text-foreground md:leading-8"
+            >
+              {article.excerpt}
+            </div>
+
+            <div
+              class="prose prose-lg max-w-none prose-headings:scroll-mt-28 prose-headings:font-display prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground prose-h2:mt-12 prose-h2:text-3xl prose-p:leading-8 prose-p:text-muted-foreground prose-a:font-medium prose-a:text-primary prose-strong:text-foreground prose-li:text-muted-foreground prose-li:marker:text-primary prose-blockquote:border-primary/40 prose-blockquote:text-muted-foreground prose-img:rounded-xl prose-hr:border-border motion-preset-fade motion-delay-200"
+            >
+              <Content />
+            </div>
+
+            <div class="mt-12 border-t border-border pt-7">
+              <div class="rounded-xl border border-border bg-card p-5 md:p-7">
+                <div
+                  class="grid h-10 w-10 place-items-center rounded-lg bg-accent text-primary"
+                >
+                  <MessageSquare size={19} />
+                </div>
+                <h2
+                  class="mt-5 font-display text-xl font-semibold text-foreground"
+                >
+                  Lanjutkan percakapannya.
+                </h2>
+                <p
+                  class="mt-2 max-w-xl text-sm leading-6 text-muted-foreground"
+                >
+                  Bagikan perspektifmu, ajukan pertanyaan, atau temukan rekan
+                  belajar melalui kanal komunitas.
+                </p>
+                <a
+                  href="/join"
+                  class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80"
+                >
+                  Masuk ke komunitas
+                  <ArrowUpRight size={16} />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    {
+      relatedArticles.length > 0 && (
+        <section class="mt-16 border-t border-border bg-card py-section md:mt-20 md:py-section-lg">
+          <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <div class="flex items-end justify-between gap-5">
+              <div>
+                <h2 class="font-display text-3xl font-semibold tracking-tight text-foreground">
+                  Artikel pilihan lainnya.
+                </h2>
+              </div>
+              <a
+                href="/articles"
+                class="hidden text-sm font-semibold text-primary hover:text-primary/80 sm:inline-flex"
+              >
+                Semua artikel
+              </a>
+            </div>
+
+            <div class="mt-7 grid gap-6 md:grid-cols-3">
+              {relatedArticles.map((related) => (
+                <a href={`/articles/${related.id}`} class="group block">
+                  <div class="overflow-hidden rounded-xl border border-border bg-muted">
+                    <img
+                      src={related.image}
+                      alt={related.title}
+                      class="aspect-card w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="mt-3 flex items-center gap-2 text-xs font-semibold tracking-meta text-primary">
+                    <span>{related.category}</span>
+                    <span class="h-1 w-1 rounded-full bg-border" />
+                    <span class="text-muted-foreground">
+                      {related.readTime}
+                    </span>
+                  </div>
+                  <h3 class="mt-2 font-display text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+                    {related.title}
+                  </h3>
+                  <p class="mt-2 text-xs text-muted-foreground">
+                    {related.date}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+  </div>
+
+  <script>
+    const shareButtons = document.querySelectorAll<HTMLButtonElement>(
+      "[data-share-button]",
+    );
+
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        const labels =
+          document.querySelectorAll<HTMLElement>("[data-share-label]");
+
+        try {
+          if (navigator.share) {
+            await navigator.share({
+              title: document.title,
+              url: window.location.href,
+            });
+          } else {
+            await navigator.clipboard.writeText(window.location.href);
+            labels.forEach((label) => {
+              label.textContent = "Tautan disalin";
+            });
+            window.setTimeout(() => {
+              labels.forEach((label) => {
+                label.textContent = label.closest("aside")
+                  ? "Bagikan artikel"
+                  : "Bagikan";
+              });
+            }, 2200);
+          }
+        } catch {
+          // The native share dialog can be dismissed without requiring an error state.
+        }
+      });
+    });
+  </script>
+</MainLayout>

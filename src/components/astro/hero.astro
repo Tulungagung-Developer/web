@@ -1,0 +1,78 @@
+---
+import { ArrowUpRight, CalendarDays, MapPin } from "lucide-react";
+---
+
+<section
+  class="relative flex min-h-(--hero-min-height) flex-col overflow-hidden border-b border-border pt-16"
+>
+  <div
+    class="absolute inset-0 opacity-grid bg-grid bg-size-(--background-size-grid)"
+  >
+  </div>
+  <div
+    class="relative mx-auto grid min-h-0 flex-1 max-w-7xl items-center gap-8 px-5 py-section md:px-8 md:py-section-lg lg:grid-cols-split lg:gap-12"
+  >
+    <div class="motion-preset-fade">
+      <h1
+        class="max-w-2xl text-balance font-display text-5xl font-semibold leading-hero tracking-hero text-foreground md:text-6xl lg:text-7xl"
+      >
+        Belajar lebih <span
+          class="font-serif font-normal italic tracking-normal">dekat,</span
+        > berkarya <span class="font-serif font-normal italic tracking-normal"
+          >lebih jauh.</span
+        >
+      </h1>
+      <p
+        class="mt-5 max-w-xl text-lg leading-7 text-muted-foreground md:text-xl md:leading-8"
+      >
+        Ruang terbuka bagi siapa pun yang ingin belajar, berbagi pengalaman, dan
+        membangun karya di dunia teknologi.
+      </p>
+      <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+        <a
+          href="/join"
+          class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Gabung sekarang
+          <ArrowUpRight size={17} />
+        </a>
+        <a
+          href="/events"
+          class="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+        >
+          Lihat agenda
+          <CalendarDays size={17} />
+        </a>
+      </div>
+
+      <div
+        class="mt-8 flex flex-wrap gap-x-6 gap-y-3 border-t border-border pt-5 text-sm text-muted-foreground"
+      >
+        <span class="inline-flex items-center gap-2"
+          ><MapPin size={16} className="text-primary" /> Tulungagung, Jawa Timur</span
+        >
+        <span>Terbuka untuk pemula hingga profesional</span>
+      </div>
+    </div>
+
+    <div class="motion-preset-fade motion-delay-100">
+      <div
+        class="relative overflow-hidden rounded-2xl border border-border bg-muted"
+      >
+        <img
+          src="/images/common/community-event.avif"
+          class="aspect-card w-full object-cover"
+          alt="Kegiatan Tulungagung Dev di auditorium"
+          fetchpriority="high"
+        />
+        <div
+          class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/65 to-transparent p-5 pt-14 text-white"
+        >
+          <p class="font-display text-lg font-semibold">
+            Mulai perjalananmu di dunia teknologi.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

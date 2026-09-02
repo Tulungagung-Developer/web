@@ -1,0 +1,439 @@
+---
+import { ArrowUpRight, Mail } from "lucide-react";
+import MobileMenu from "../islands/mobile-menu";
+import "../styles/global.css";
+import Head from "@/components/astro/head.astro";
+import { NAV_ITEMS } from "@/lib/constants";
+import InstagramIcon from "@/components/astro/instagram-icon.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+}
+
+const { title, description, image, type, publishedTime } = Astro.props;
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) =>
+  path === "/" ? currentPath === "/" : currentPath.startsWith(path);
+
+const loaderName = [
+  { text: "Tulungagung", indexClass: "[--word-index:0]" },
+  { text: "Dev", indexClass: "[--word-index:1]" },
+];
+const loaderDescription = [
+  { text: "Belajar", indexClass: "[--word-index:2]", accent: false },
+  { text: "lebih", indexClass: "[--word-index:3]", accent: false },
+  { text: "dekat,", indexClass: "[--word-index:4]", accent: true },
+  { text: "berkarya", indexClass: "[--word-index:5]", accent: false },
+  { text: "lebih", indexClass: "[--word-index:6]", accent: true },
+  { text: "jauh.", indexClass: "[--word-index:7]", accent: true },
+];
+const loaderWordMaskClass = "inline-block overflow-hidden pb-[0.2em]";
+const loaderWordClass =
+  "inline-block translate-y-[115%] transition-transform duration-(--duration-loader-title) ease-loader-title delay-[calc(var(--delay-loader-info)+var(--word-index)*var(--stagger-loader-title))] group-data-[state=visible]:translate-y-0 motion-reduce:translate-y-0 motion-reduce:transition-none";
+---
+
+<html lang="id">
+  <head>
+    <script is:inline>
+      const root = document.documentElement;
+      let hasSeenLoader = false;
+
+      try {
+        hasSeenLoader =
+          localStorage.getItem("tulungagung-dev:loader-seen") === "true";
+      } catch {}
+
+      if (!hasSeenLoader) {
+        root.dataset.siteLoader = "active";
+        root.classList.add("overflow-hidden");
+      }
+    </script>
+    <Head
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      publishedTime={publishedTime}
+    />
+  </head>
+  <body class="font-sans overflow-x-hidden">
+    <div
+      id="site-loader"
+      class="group fixed inset-0 isolate z-60 hidden overflow-hidden text-brand-deep-foreground in-data-[site-loader=active]:block in-data-[site-loader=exiting]:block"
+      data-state="loading"
+      role="progressbar"
+      aria-label="Memuat Tulungagung Dev, ruang belajar dan kolaborasi teknologi di Tulungagung."
+      aria-valuemin="1"
+      aria-valuemax="100"
+      aria-valuenow="1"
+    >
+      <div
+        class="absolute inset-0 bg-brand-deep transition-transform ease-in-out duration-(--duration-loader-panel) group-data-[state=exiting]:translate-x-[101%] motion-reduce:transition-none"
+      >
+      </div>
+
+      <div
+        class="relative z-2 grid h-full w-full grid-rows-[1fr_auto] p-6 md:p-12 group-data-[state=exiting]:opacity-0"
+      >
+        <div class="max-w-312 self-center md:pl-[8vw]" aria-hidden="true">
+          <p
+            class="m-0 flex flex-wrap gap-x-[0.22em] gap-y-0 font-display text-[clamp(4rem,10vw,8.5rem)] font-semibold leading-[0.88] tracking-[-0.065em]"
+          >
+            {
+              loaderName.map((word) => (
+                <span class:list={[loaderWordMaskClass, "p-3"]}>
+                  <span class:list={[loaderWordClass, word.indexClass]}>
+                    {word.text}
+                  </span>
+                </span>
+              ))
+            }
+          </p>
+          <p
+            class="mt-[clamp(1.5rem,4vw,3rem)] flex max-w-228 flex-wrap gap-x-[0.28em] gap-y-[0.1em] text-[clamp(1.1rem,2.8vw,2.25rem)] font-normal leading-[1.15] tracking-hero text-brand-deep-foreground/70"
+          >
+            {
+              loaderDescription.map((word) => (
+                <span class={loaderWordMaskClass}>
+                  <span
+                    class:list={[
+                      loaderWordClass,
+                      word.indexClass,
+                      word.accent &&
+                        "font-serif font-normal italic tracking-normal",
+                    ]}
+                  >
+                    {word.text}
+                  </span>
+                </span>
+              ))
+            }
+          </p>
+        </div>
+
+        <div class="flex justify-end" aria-hidden="true">
+          <p
+            class="m-0 min-w-[4.2ch] text-right text-[clamp(2rem,5vw,4.5rem)] font-normal leading-[0.8] tracking-[-0.08em] [font-variant-numeric:tabular-nums]"
+          >
+            <span data-loader-count>1</span><sup
+              class="ml-[0.2em] align-top text-[0.22em] tracking-normal">%</sup
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="min-h-screen bg-background">
+      <header
+        class="fixed inset-x-0 top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl"
+      >
+        <div
+          class="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-8"
+        >
+          <a
+            href="/"
+            class="group inline-flex items-center gap-3"
+            aria-label="Tulungagung Dev, beranda"
+          >
+            <Image
+              src="/images/common/logo.avif"
+              width={190}
+              height={40}
+              alt="Tulungagung Dev"
+              priority
+            />
+          </a>
+
+          <nav
+            class="hidden items-center gap-1 md:flex"
+            aria-label="Navigasi utama"
+          >
+            {
+              NAV_ITEMS.map((item) => (
+                <a
+                  href={item.path}
+                  aria-current={isActive(item.path) ? "page" : undefined}
+                  class={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    isActive(item.path)
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+          </nav>
+
+          <div class="hidden md:block">
+            <a
+              href="/join"
+              class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Bergabung
+              <ArrowUpRight className="size-4" />
+            </a>
+          </div>
+
+          <MobileMenu client:load />
+        </div>
+      </header>
+
+      <main class="min-h-screen">
+        <slot />
+      </main>
+
+      <footer
+        class="border-t border-brand-deep-foreground/10 bg-brand-deep text-brand-deep-foreground"
+      >
+        <div class="mx-auto max-w-7xl px-5 py-section md:px-8 md:py-section-lg">
+          <div class="grid gap-8 md:grid-cols-[1.4fr_1fr_1fr]">
+            <div>
+              <a href="/" class="inline-flex items-center gap-3">
+                <Image
+                  src="/images/common/logo.avif"
+                  width={190}
+                  height={40}
+                  alt="Tulungagung Dev"
+                />
+              </a>
+              <p
+                class="mt-4 max-w-md text-sm leading-6 text-brand-deep-foreground/65"
+              >
+                Ruang belajar dan kolaborasi bagi pengembang, desainer,
+                mahasiswa, dan pegiat teknologi di Tulungagung.
+              </p>
+            </div>
+
+            <div>
+              <p
+                class="text-xs font-semibold uppercase tracking-kicker text-brand-deep-foreground/45"
+              >
+                Jelajahi
+              </p>
+              <div
+                class="mt-4 flex flex-col items-start gap-2 text-sm text-brand-deep-foreground/75"
+              >
+                {
+                  NAV_ITEMS.map((item) => (
+                    <a
+                      href={item.path}
+                      class="hover:text-brand-deep-foreground"
+                    >
+                      {item.label}
+                    </a>
+                  ))
+                }
+                <a href="/join" class="hover:text-brand-deep-foreground"
+                  >Bergabung</a
+                >
+              </div>
+            </div>
+
+            <div>
+              <p
+                class="text-xs font-semibold uppercase tracking-kicker text-brand-deep-foreground/45"
+              >
+                Terhubung dengan kami
+              </p>
+              <div class="mt-4 flex flex-col items-start gap-2 text-sm">
+                <a
+                  href="mailto:hi@tulungagungdev.org"
+                  class="inline-flex items-center gap-2 text-brand-deep-foreground/75 hover:text-brand-deep-foreground"
+                  ><Mail className="size-4" /> Email</a
+                >
+                <a
+                  href="https://instagram.com/tulungagung.dev"
+                  class="inline-flex items-center gap-2 text-brand-deep-foreground/75 hover:text-brand-deep-foreground"
+                  ><InstagramIcon class="size-4" /> Instagram</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-10 flex flex-col gap-3 border-t border-brand-deep-foreground/10 pt-6 text-xs text-brand-deep-foreground/45 md:flex-row md:items-center md:justify-between"
+          >
+            <span>© 2026 Tulungagung Dev. Dikelola bersama oleh komunitas.</span
+            >
+            <span>Tulungagung, Jawa Timur</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script is:inline>
+      const documentElement = document.documentElement;
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const revealTargets = Array.from(
+        document.querySelectorAll("main section, main > article"),
+      );
+      const scrollRevealClasses = [
+        "opacity-0",
+        "translate-y-[var(--reveal-distance)]",
+        "transition-[opacity,transform]",
+        "duration-(--duration-scroll-reveal)",
+        "ease-out",
+        "will-change-[opacity,transform]",
+        "data-[scroll-revealed]:opacity-100",
+        "data-[scroll-revealed]:translate-y-0",
+        "motion-reduce:opacity-100",
+        "motion-reduce:translate-y-0",
+        "motion-reduce:transition-none",
+      ];
+
+      if (!reducedMotion && "IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+          (entries, currentObserver) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+
+              entry.target.setAttribute("data-scroll-revealed", "");
+              entry.target.addEventListener(
+                "transitionend",
+                () =>
+                  entry.target.classList.remove(
+                    "will-change-[opacity,transform]",
+                  ),
+                { once: true },
+              );
+              currentObserver.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.14, rootMargin: "0px 0px -10% 0px" },
+        );
+
+        revealTargets.slice(1).forEach((target) => {
+          target.classList.add(...scrollRevealClasses);
+          target.setAttribute("data-scroll-reveal", "");
+          observer.observe(target);
+        });
+      } else {
+        revealTargets.forEach((target) =>
+          target.setAttribute("data-scroll-revealed", ""),
+        );
+      }
+
+      const loader = document.getElementById("site-loader");
+
+      if (!(loader instanceof HTMLElement)) {
+        delete documentElement.dataset.siteLoader;
+        documentElement.classList.remove("overflow-hidden");
+      } else if (documentElement.dataset.siteLoader !== "active") {
+        documentElement.classList.remove("overflow-hidden");
+        loader.remove();
+      } else {
+        const count = loader.querySelector("[data-loader-count]");
+        const progressBar = loader.querySelector("[data-loader-progress]");
+        const label = loader.querySelector("[data-loader-label]");
+        const rootStyles = window.getComputedStyle(documentElement);
+        const startedAt = performance.now();
+
+        const durationFromToken = (token, fallback) => {
+          const value = rootStyles.getPropertyValue(token).trim();
+          const parsed = Number.parseFloat(value);
+
+          if (!Number.isFinite(parsed)) return fallback;
+          return value.endsWith("s") && !value.endsWith("ms")
+            ? parsed * 1000
+            : parsed;
+        };
+        const loaderMinimumDuration = durationFromToken(
+          "--duration-loader-minimum",
+          1650,
+        );
+        const loaderMaximumDuration = durationFromToken(
+          "--duration-loader-maximum",
+          4000,
+        );
+        const loaderHoldDuration = durationFromToken(
+          "--duration-loader-hold",
+          220,
+        );
+        const loaderExitDuration = durationFromToken(
+          "--duration-loader-exit",
+          1050,
+        );
+        let progress = 1;
+        let pageReady = document.readyState === "complete";
+        let finishing = false;
+
+        const randomBetween = (minimum, maximum) =>
+          Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+        const waitFor = (duration) =>
+          new Promise((resolve) => window.setTimeout(resolve, duration));
+
+        const setProgress = (nextProgress) => {
+          progress = Math.min(100, nextProgress);
+          if (count) count.textContent = String(progress);
+        };
+
+        const finish = async () => {
+          if (finishing) return;
+          finishing = true;
+          setProgress(100);
+          if (label) label.textContent = "Siap";
+
+          try {
+            localStorage.setItem("tulungagung-dev:loader-seen", "true");
+          } catch {}
+
+          await waitFor(reducedMotion ? 50 : loaderHoldDuration);
+          if (!reducedMotion && "fonts" in document) await document.fonts.ready;
+
+          loader.dataset.state = "exiting";
+          documentElement.dataset.siteLoader = "exiting";
+
+          await waitFor(reducedMotion ? 50 : loaderExitDuration);
+          loader.remove();
+          delete documentElement.dataset.siteLoader;
+          documentElement.classList.remove("overflow-hidden");
+        };
+
+        const tick = () => {
+          const elapsed = performance.now() - startedAt;
+          const canComplete =
+            (pageReady && elapsed >= loaderMinimumDuration) ||
+            elapsed >= loaderMaximumDuration;
+          const maximum = canComplete ? 100 : 94;
+          const increment =
+            progress < 55 ? randomBetween(4, 11) : randomBetween(1, 6);
+
+          setProgress(Math.min(maximum, progress + increment));
+
+          if (progress === 100) {
+            void finish();
+            return;
+          }
+
+          window.setTimeout(tick, randomBetween(55, 145));
+        };
+
+        window.addEventListener(
+          "load",
+          () => {
+            pageReady = true;
+          },
+          { once: true },
+        );
+
+        if (reducedMotion) {
+          loader.dataset.state = "visible";
+          void finish();
+        } else {
+          requestAnimationFrame(() => {
+            loader.dataset.state = "visible";
+            tick();
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

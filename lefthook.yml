@@ -1,0 +1,28 @@
+pre-commit:
+  jobs:
+    - run: pnpm exec oxfmt {staged_files}
+      glob:
+        - "*.css"
+        - "*.ts"
+        - "*.js"
+        - "*.tsx"
+        - "*.jsx"
+        - "*.json"
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  jobs:
+    - run: pnpm run check
+      glob:
+        - "*.ts"
+        - "*.tsx"
+        - "*.json"
+
+    - run: pnpm exec oxlint {push_files} --no-error-on-unmatched-pattern
+      glob:
+        - "*.ts"
+        - "*.js"
+        - "*.tsx"
+        - "*.jsx"
+        - "*.json"

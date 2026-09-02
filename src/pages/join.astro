@@ -1,0 +1,84 @@
+---
+import { CheckCircle2, UserPlus } from "lucide-react";
+import JoinForm from "@/islands/join-form";
+import MainLayout from "@/layouts/main-layout.astro";
+---
+
+<MainLayout title="Bergabung">
+  <section class="pt-16">
+    <div
+      class="mx-auto grid max-w-7xl gap-10 px-5 py-section md:px-8 md:py-section-lg lg:grid-cols-split lg:items-center lg:gap-12"
+    >
+      <div>
+        <h1
+          class="text-balance font-display text-5xl font-semibold tracking-hero text-foreground md:text-6xl"
+        >
+          Mulai dari <span class="font-serif font-normal italic tracking-normal"
+            >satu percakapan.</span
+          >
+        </h1>
+        <p
+          class="mt-5 max-w-xl text-lg leading-7 text-muted-foreground md:leading-8"
+        >
+          Profesional, mahasiswa, dan pemula punya ruang yang sama untuk
+          belajar. Masuk ke kanal komunitas untuk berkenalan, bertanya, dan
+          mengikuti kegiatan terbaru.
+        </p>
+
+        <div class="mt-7 space-y-3 text-sm text-foreground">
+          <p class="flex items-center gap-3">
+            <CheckCircle2 size={18} className="text-primary" /> Tidak ada biaya keanggotaan.
+          </p>
+          <p class="flex items-center gap-3">
+            <CheckCircle2 size={18} className="text-primary" /> Tidak perlu pengalaman
+            teknis tertentu.
+          </p>
+          <p class="flex items-center gap-3">
+            <CheckCircle2 size={18} className="text-primary" /> Ikuti kegiatan sesuai
+            waktu dan minatmu.
+          </p>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-2xl border border-border bg-muted">
+        <img
+          src="/images/gathering/community-gathering-3.avif"
+          alt="Pertemuan santai anggota Tulungagung Dev"
+          class="aspect-card w-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-border bg-card py-section md:py-section-lg">
+    <div
+      class="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-12"
+    >
+      <div>
+        <div class="grid size-12 place-items-center rounded-xl bg-accent text-primary">
+          <UserPlus size={22} aria-hidden="true" />
+        </div>
+        <h2
+          class="mt-6 max-w-md font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
+        >
+          Daftar sebagai anggota.
+        </h2>
+        <p class="mt-4 max-w-md text-base leading-7 text-muted-foreground">
+          Ceritakan sedikit tentang dirimu dan bidang teknologi yang ingin kamu
+          pelajari. Informasi ini membantu kami menyiapkan kegiatan yang lebih
+          relevan untuk anggota.
+        </p>
+        <div class="mt-7 rounded-xl border border-border bg-background p-5">
+          <p class="text-sm font-semibold text-foreground">Yang perlu disiapkan</p>
+          <ul class="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+            <li>Data diri dan kontak aktif.</li>
+            <li>Minat utama di bidang teknologi.</li>
+            <li>Alasan bergabung dengan komunitas.</li>
+          </ul>
+        </div>
+      </div>
+
+      <JoinForm client:load />
+    </div>
+  </section>
+</MainLayout>

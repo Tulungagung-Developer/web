@@ -1,0 +1,115 @@
+---
+import { Code2, Handshake, MessagesSquare } from "lucide-react";
+
+const programs = [
+  {
+    icon: MessagesSquare,
+    number: "01",
+    title: "Belajar bersama",
+    description:
+      "Diskusi, kelas, dan sesi diskusi yang membahas praktik teknologi secara relevan dan mudah diikuti.",
+  },
+  {
+    icon: Handshake,
+    number: "02",
+    title: "Bangun network",
+    description:
+      "Temukan rekan dari berbagai bidang dan pengalaman untuk bertukar perspektif serta membuka peluang kolaborasi.",
+  },
+  {
+    icon: Code2,
+    number: "03",
+    title: "Berkarya bersama",
+    description:
+      "Ubah pengetahuan menjadi proyek yang bermanfaat bagi anggota dan lingkungan sekitar.",
+  },
+];
+---
+
+<section class="border-b border-border bg-card py-section md:py-section-lg">
+  <div class="mx-auto max-w-7xl px-5 md:px-8">
+    <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+      <div>
+        <h2
+          class="max-w-md text-balance font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
+        >
+          Komunitas yang bergerak lewat partisipasi.
+        </h2>
+        <p class="mt-4 max-w-lg text-base leading-7 text-muted-foreground">
+          Kami percaya ekosistem teknologi lokal menjadi kuat ketika pengetahuan
+          dibagikan, relasi dijaga dan ide dikerjakan bersama.
+        </p>
+      </div>
+
+      <div class="divide-y divide-border border-y border-border">
+        {
+          programs.map(({ icon: Icon, number, title, description }) => (
+            <div class="grid gap-4 py-5 sm:grid-cols-[3rem_1fr_1.4fr] sm:items-start sm:gap-5">
+              <div class="grid h-10 w-10 place-items-center rounded-lg bg-accent text-primary">
+                <Icon size={19} />
+              </div>
+              <div>
+                <span class="text-xs font-semibold text-primary">{number}</span>
+                <h3 class="mt-1 font-display text-lg font-semibold text-foreground">
+                  {title}
+                </h3>
+              </div>
+              <p class="text-sm leading-6 text-muted-foreground">
+                {description}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-section md:py-section-lg">
+  <div class="mx-auto max-w-7xl px-5 md:px-8">
+    <div
+      class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between"
+    >
+      <div>
+        <h2
+          class="font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
+        >
+          Bertemu, <i>bertukar pikiran</i> dan bertumbuh bersama.
+        </h2>
+      </div>
+    </div>
+
+    <div class="mt-8 grid gap-4 md:grid-cols-12 md:grid-rows-2">
+      <figure
+        class="overflow-hidden rounded-xl border border-border bg-muted md:col-span-5 md:row-span-2"
+      >
+        <img
+          src="/images/gathering/community-gathering-1.avif"
+          alt="Anggota Tulungagung Dev berkumpul dan berdiskusi"
+          class="h-full min-h-80 w-full object-cover"
+          loading="lazy"
+        />
+      </figure>
+      <figure
+        class="overflow-hidden rounded-xl border border-border bg-muted md:col-span-7"
+      >
+        <img
+          src="/images/gathering/community-gathering-2.avif"
+          alt="Kebersamaan anggota Tulungagung Dev"
+          class="aspect-wide h-full w-full object-cover"
+          loading="lazy"
+        />
+      </figure>
+      <figure
+        class="overflow-hidden rounded-xl border border-border bg-muted md:col-span-7"
+      >
+        <img
+          src="/images/gathering/community-gathering-3.avif"
+          alt="Pertemuan santai komunitas Tulungagung Dev"
+          class="aspect-wide h-full w-full object-cover"
+          loading="lazy"
+        />
+      </figure>
+    </div>
+  </div>
+</section>
