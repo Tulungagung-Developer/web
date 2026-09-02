@@ -51,7 +51,7 @@ export const server = {
 
       try {
         verification = await Effect.runPromise(
-          verifyTurnstileToken(payload.turnstileToken, turnstileSecret, clientAddress)
+          verifyTurnstileToken(payload.turnstileToken!, turnstileSecret, clientAddress)
         );
       } catch (error) {
         console.warn("Rejected join form submission after Turnstile verification", {

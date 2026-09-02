@@ -8,9 +8,9 @@ export default defineConfig({
   adapter: cloudflare({
     prerenderEnvironment: "node",
     imageService: {
-			build: "cloudflare-binding",
-			runtime: "cloudflare-binding",
-		},
+      build: "cloudflare-binding",
+      runtime: "cloudflare-binding",
+    },
   }),
   integrations: [react(), mdx()],
   output: "static",
