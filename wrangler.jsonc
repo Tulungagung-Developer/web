@@ -4,6 +4,9 @@
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "main": "./src/worker.ts",
+  "vars": {
+    "PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAAEk_TrrEBejEGw1C",
+  },
   "queues": {
     "producers": [
       {
