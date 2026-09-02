@@ -6,6 +6,8 @@ import Head from "@/components/astro/head.astro";
 import { NAV_ITEMS } from "@/lib/constants";
 import InstagramIcon from "@/components/astro/instagram-icon.astro";
 import { Image } from "astro:assets";
+import logoDark from "@/assets/images/common/logo-dark.webp";
+import logo from "@/assets/images/common/logo.webp";
 
 interface Props {
   title: string;
@@ -141,11 +143,12 @@ const loaderWordClass =
             aria-label="Tulungagung Dev, beranda"
           >
             <Image
-              src="/images/common/logo.avif"
+              src={logoDark}
               width={190}
               height={40}
               alt="Tulungagung Dev"
               priority
+              quality="max"
             />
           </a>
 
@@ -196,7 +199,7 @@ const loaderWordClass =
             <div>
               <a href="/" class="inline-flex items-center gap-3">
                 <Image
-                  src="/images/common/logo.avif"
+                  src={logo}
                   width={190}
                   height={40}
                   alt="Tulungagung Dev"

@@ -1,6 +1,9 @@
 ---
 import { ArrowUpRight, Check } from "lucide-react";
 import MainLayout from "@/layouts/main-layout.astro";
+import communityGathering2 from "@/assets/images/gathering/community-gathering-2.webp";
+import communityTeam from "@/assets/images/common/community-team.webp";
+import { Image } from "astro:assets";
 
 const values = [
   [
@@ -48,8 +51,8 @@ const values = [
     >
       <div class="lg:col-span-7">
         <div class="overflow-hidden rounded-2xl border border-border bg-muted">
-          <img
-            src="/images/common/community-team.avif"
+          <Image
+            src={communityTeam}
             alt="Anggota Tulungagung Dev"
             class="aspect-card w-full object-cover"
           />
@@ -141,8 +144,8 @@ const values = [
           </ul>
         </div>
         <div class="overflow-hidden rounded-2xl border border-border bg-muted">
-          <img
-            src="/images/gathering/community-gathering-2.avif"
+          <Image
+            src={communityGathering2}
             alt="Pertemuan anggota Tulungagung Dev"
             class="aspect-card w-full object-cover"
             loading="lazy"

@@ -1,5 +1,6 @@
 import { withState } from "@astrojs/react/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { actions, isInputError } from "astro:actions";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -17,7 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { type RegistrationPayload, registrationSchema } from "@/lib/registration-schema";
+import {
+  type RegistrationActionPayload,
+  registrationActionSchema,
+  type RegistrationPayload,
+} from "@/lib/registration-schema";
 
 const occupationItems = [
   { label: "Pilih aktivitas", value: null },
@@ -45,7 +50,7 @@ const experienceItems = [
   { label: "Berpengalaman secara profesional", value: "advanced" },
 ] as const;
 
-const defaultValues: RegistrationPayload = {
+const defaultValues: RegistrationActionPayload = {
   fullName: "",
   email: "",
   whatsapp: "",
@@ -55,12 +60,21 @@ const defaultValues: RegistrationPayload = {
   experience: "",
   motivation: "",
   consent: false,
+  turnstileToken: "",
 };
+
+const turnstileOptions = {
+  action: "registration",
+  language: "id",
+  responseField: true,
+  responseFieldName: "turnstileToken",
+  size: "flexible",
+} as const;
 
 type JoinSelectName = "occupation" | "interest" | "experience";
 
 interface JoinSelectProps<Name extends JoinSelectName> {
-  control: ReturnType<typeof useForm<RegistrationPayload>>["control"];
+  control: ReturnType<typeof useForm<RegistrationActionPayload>>["control"];
   id: string;
   name: Name;
   label: string;
@@ -120,11 +134,39 @@ function JoinSelect<Name extends JoinSelectName>({
   );
 }
 
-export default function JoinForm() {
+interface JoinFormProps {
+  turnstileSiteKey?: string;
+}
+
+export default function JoinForm({ turnstileSiteKey }: JoinFormProps) {
   const form = useForm({
     defaultValues,
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(registrationActionSchema),
   });
+  const turnstileRef = React.useRef<TurnstileInstance | null>(null);
+
+  const handleTurnstileSuccess = React.useCallback((token: string) => {
+    form.setValue("turnstileToken", token);
+    form.clearErrors("turnstileToken");
+  }, []);
+  const handleTurnstileExpire = React.useCallback(() => {
+    form.setValue("turnstileToken", null);
+    form.clearErrors("turnstileToken");
+  }, []);
+  const handleTurnstileError = React.useCallback(() => {
+    form.setValue("turnstileToken", null);
+    form.setError("turnstileToken", {
+      type: "value",
+      message: "Pemeriksaan keamanan gagal. Silakan coba lagi.",
+    });
+  }, []);
+  const handleTurnstileTimeout = React.useCallback(() => {
+    form.setValue("turnstileToken", null);
+    form.setError("turnstileToken", {
+      type: "value",
+      message: "Pemeriksaan keamanan terlalu lama. Silakan coba lagi.",
+    });
+  }, []);
 
   const [actionState, submitAction, isSubmitting] = React.useActionState(
     withState(actions.register),
@@ -137,25 +179,44 @@ export default function JoinForm() {
   React.useEffect(() => {
     if (actionState.data?.ok) {
       form.reset();
+      turnstileRef.current?.reset();
+      form.setValue("turnstileToken", null);
+      form.clearErrors("turnstileToken");
+    } else if (actionState.error && !isInputError(actionState.error)) {
+      turnstileRef.current?.reset();
+      form.setValue("turnstileToken", null);
+      form.clearErrors("turnstileToken");
     }
-  }, [actionState.data, form.reset]);
+  }, [actionState.data, actionState.error, form.reset]);
 
   const inputError =
     actionState.error && isInputError(actionState.error) ? actionState.error : null;
   const serverErrors = inputError?.fields as
-    | Partial<Record<keyof RegistrationPayload, string[]>>
+    | Partial<Record<keyof RegistrationActionPayload, string[]>>
     | undefined;
   const getServerError = (name: keyof RegistrationPayload) => serverErrors?.[name]?.join(", ");
 
-  const onSubmit = form.handleSubmit((_values, event) => {
-    const form = event?.target as HTMLFormElement | undefined;
+  const turnstileToken = form.watch("turnstileToken");
 
-    if (!form) {
+  const onSubmit = form.handleSubmit((_values, event) => {
+    const formElement = event?.target as HTMLFormElement | undefined;
+
+    if (!formElement) {
       return;
     }
 
+    if (!turnstileSiteKey) {
+      form.setError("turnstileToken", {
+        type: "value",
+        message: "Perlindungan spam belum dikonfigurasi. Silakan coba lagi nanti.",
+      });
+      return;
+    }
+
+    form.clearErrors("turnstileToken");
+
     React.startTransition(() => {
-      submitAction(new FormData(form));
+      submitAction(new FormData(formElement));
     });
   });
 
@@ -180,6 +241,16 @@ export default function JoinForm() {
       aria-label="Formulir pendaftaran anggota"
       onSubmit={onSubmit}
     >
+      <input
+        aria-hidden="true"
+        autoComplete="off"
+        className="absolute left-[-10000px] h-px w-px overflow-hidden opacity-0"
+        id="website"
+        name="website"
+        tabIndex={-1}
+        type="text"
+      />
+
       <FieldGroup className="grid sm:grid-cols-2">
         <Controller
           name="fullName"
@@ -352,8 +423,44 @@ export default function JoinForm() {
         />
       </FieldGroup>
 
+      <div className="mt-6 sm:col-span-2" role="group" aria-labelledby="security-check-label">
+        <p id="security-check-label" className="text-sm font-medium text-foreground">
+          Pemeriksaan keamanan
+        </p>
+        {turnstileSiteKey ? (
+          <div className="mt-2">
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={turnstileSiteKey}
+              options={turnstileOptions}
+              onSuccess={handleTurnstileSuccess}
+              onExpire={handleTurnstileExpire}
+              onError={handleTurnstileError}
+              onTimeout={handleTurnstileTimeout}
+            />
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
+              Pemeriksaan ini membantu melindungi formulir dari spam.
+            </p>
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-destructive" role="alert">
+            Perlindungan spam belum tersedia. Silakan muat ulang halaman nanti.
+          </p>
+        )}
+        {form.formState.errors.turnstileToken?.message ? (
+          <p className="mt-2 text-sm text-destructive" role="alert">
+            {form.formState.errors.turnstileToken.message}
+          </p>
+        ) : null}
+      </div>
+
       <div className="mt-7 border-t border-border pt-5">
-        <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full sm:w-auto"
+          disabled={isSubmitting || !turnstileSiteKey || !turnstileToken}
+        >
           {isSubmitting ? "Mengirim..." : "Kirim pendaftaran"}
         </Button>
         <p

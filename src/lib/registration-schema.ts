@@ -38,4 +38,33 @@ export const registrationSchema = z.object({
     .refine((value) => value === true, "You must agree to the terms and conditions to proceed"),
 });
 
+export const registrationActionSchema = registrationSchema.extend({
+  turnstileToken: z
+    .string()
+    .trim()
+    .nullable()
+    .superRefine((value, ctx) => {
+      if (value === null || value === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Please complete the security check",
+        });
+      }
+
+      if (value && value.length > 2048) {
+        ctx.addIssue({
+          code: "custom",
+          message: "The security check token is too long",
+        });
+      }
+    }),
+  website: z
+    .string()
+    .trim()
+    .max(0, { error: "The form submission is invalid" })
+    .nullable()
+    .default(""),
+});
+
 export type RegistrationPayload = z.input<typeof registrationSchema>;
+export type RegistrationActionPayload = z.input<typeof registrationActionSchema>;

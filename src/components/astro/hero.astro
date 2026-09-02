@@ -1,5 +1,7 @@
 ---
 import { ArrowUpRight, CalendarDays, MapPin } from "lucide-react";
+import commuityEvent from "@/assets/images/common/community-event.webp";
+import { Image } from "astro:assets";
 ---
 
 <section
@@ -59,8 +61,8 @@ import { ArrowUpRight, CalendarDays, MapPin } from "lucide-react";
       <div
         class="relative overflow-hidden rounded-2xl border border-border bg-muted"
       >
-        <img
-          src="/images/common/community-event.avif"
+        <Image
+          src={commuityEvent}
           class="aspect-card w-full object-cover"
           alt="Kegiatan Tulungagung Dev di auditorium"
           fetchpriority="high"

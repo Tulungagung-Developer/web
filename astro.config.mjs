@@ -7,6 +7,10 @@ import { defineConfig, envField, fontProviders } from "astro/config";
 export default defineConfig({
   adapter: cloudflare({
     prerenderEnvironment: "node",
+    imageService: {
+			build: "cloudflare-binding",
+			runtime: "cloudflare-binding",
+		},
   }),
   integrations: [react(), mdx()],
   output: "static",
@@ -37,7 +41,16 @@ export default defineConfig({
   },
   env: {
     schema: {
+      PUBLIC_TURNSTILE_SITE_KEY: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
       SPREADSHEET_ID: envField.string({
+        access: "secret",
+        context: "server",
+      }),
+      TURNSTILE_SECRET: envField.string({
         access: "secret",
         context: "server",
       }),

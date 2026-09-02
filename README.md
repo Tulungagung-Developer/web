@@ -7,6 +7,7 @@ The Tulungagung Dev website is the community's home for articles, events, and me
 - Publish community articles from Markdown content files.
 - Publish upcoming and past events with structured metadata.
 - Collect member registrations through a validated form.
+- Protect member registration with Cloudflare Turnstile and layered spam controls.
 - Process registrations asynchronously with a Cloudflare Queue.
 - Append registration data to Google Sheets through a service account.
 
@@ -75,13 +76,30 @@ The site is normally available at `http://localhost:4321`.
 
 ## Environment variables
 
-| Variable                      | Required                    | Description                                                                                  |
-| ----------------------------- | --------------------------- | -------------------------------------------------------------------------------------------- |
-| `SPREADSHEET_ID`              | Yes                         | The Google Spreadsheet ID. It is the value between `/d/` and `/edit` in the spreadsheet URL. |
-| `SPREADSHEET_RANGE`           | No                          | The target sheet and range for appended rows. Defaults to `Sheet1!A:K`.                      |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | For registration processing | The service-account JSON object. It must contain at least `client_email` and `private_key`.  |
+| Variable                      | Required                    | Description                                                                                    |
+| ----------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
+| `PUBLIC_TURNSTILE_SITE_KEY`   | For registration            | The public site key from the Cloudflare Turnstile widget configured for this site's hostnames. |
+| `TURNSTILE_SECRET`            | For registration            | The private Turnstile secret used for server-side token validation.                            |
+| `SPREADSHEET_ID`              | Yes                         | The Google Spreadsheet ID. It is the value between `/d/` and `/edit` in the spreadsheet URL.   |
+| `SPREADSHEET_RANGE`           | No                          | The target sheet and range for appended rows. Defaults to `Sheet1!A:K`.                        |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` | For registration processing | The service-account JSON object. It must contain at least `client_email` and `private_key`.    |
 
-The variables are server-only secrets. Never commit `.env`, service-account files, private keys, or real credentials. The repository's `.gitignore` already excludes the common local secret files.
+The secret variables are server-only. `PUBLIC_TURNSTILE_SITE_KEY` is intentionally public and
+may be exposed to the browser. Never commit `.env`, service-account files, private keys, or
+real credentials. The repository's `.gitignore` already excludes the common local secret files.
+
+Create a Turnstile widget in the Cloudflare dashboard and add the deployed hostname (plus
+`localhost` for local testing if needed). The site key is public and may be exposed to the
+browser; keep `TURNSTILE_SECRET` private and set it with Wrangler:
+
+```bash
+pnpm exec wrangler secret put TURNSTILE_SECRET
+```
+
+The registration action also rejects submissions that fill its honeypot field and applies a
+five-submission-per-minute Cloudflare Worker rate limit per client address. The rate-limit
+namespace ID in `wrangler.jsonc` must be unique within the Cloudflare account; change `1001`
+if that namespace is already in use.
 
 ### Google Sheets setup
 
@@ -147,6 +165,7 @@ Set production secrets through Wrangler or the Cloudflare dashboard. For example
 pnpm exec wrangler secret put SPREADSHEET_ID
 pnpm exec wrangler secret put SPREADSHEET_RANGE
 pnpm exec wrangler secret put GOOGLE_SERVICE_ACCOUNT_JSON
+pnpm exec wrangler secret put TURNSTILE_SECRET
 ```
 
 The `registration-spreadsheet` queue must be available in the target Cloudflare account, and the production service account must have Editor access to the configured spreadsheet.

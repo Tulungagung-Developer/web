@@ -3,6 +3,7 @@
 // Runtime types generated with workerd@1.20260828.1 2026-09-01 global_fetch_strictly_public,nodejs_compat
 interface __BaseEnv_Env {
   REGISTER_QUEUE: Queue;
+  REGISTRATION_RATE_LIMITER: RateLimit;
   ASSETS: Fetcher;
   SPREADSHEET_ID: string;
   GOOGLE_SERVICE_ACCOUNT_JSON: string;

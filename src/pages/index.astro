@@ -6,6 +6,8 @@ import EmptyState from "@/components/astro/empty-state.astro";
 import Hero from "@/components/astro/hero.astro";
 import MainLayout from "@/layouts/main-layout.astro";
 import { formatDateId } from "@/lib/date";
+import { Image } from "astro:assets";
+import communityTeam from "@/assets/images/common/community-team.webp";
 
 const entries = await getCollection("articles");
 const eventEntries = await getCollection("events");
@@ -65,8 +67,8 @@ const featuredEvents = eventEntries
       class="mx-auto grid max-w-7xl items-center gap-8 px-5 md:px-8 lg:grid-cols-2 lg:gap-12"
     >
       <div class="overflow-hidden rounded-2xl border border-border bg-muted">
-        <img
-          src="/images/common/community-team.avif"
+        <Image
+          src={communityTeam}
           alt="Anggota Tulungagung Dev berfoto bersama"
           class="aspect-card w-full object-cover"
           loading="lazy"
