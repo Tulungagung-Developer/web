@@ -167,4 +167,4 @@ src/
 
 ## Contributing
 
-Contributions are welcome. You can contribute an article, submit an event, or improve the codebase. Read [contribution.md](contribution.md) before preparing a pull request.
+Contributions are welcome. You can contribute an article, submit an event, or improve the codebase. Read [contribution.md](CONTRIBUTION.md) before preparing a pull request.
